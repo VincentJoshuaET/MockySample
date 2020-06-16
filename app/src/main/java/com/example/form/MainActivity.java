@@ -1,8 +1,5 @@
 package com.example.form;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -21,6 +18,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.form.databinding.ActivityMainBinding;
 import com.google.android.material.button.MaterialButton;
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     textGender.setText(response.body().getGender(), false);
                     buttonSubmit.setClickable(true);
                     buttonSubmit.setIcon(null);
+                    Snackbar.make(view, "Data updated", Snackbar.LENGTH_LONG).show();
                 }
             }
 
