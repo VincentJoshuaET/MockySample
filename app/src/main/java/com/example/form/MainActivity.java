@@ -22,7 +22,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.form.databinding.ActivityMainBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     TextInputEditText textDateOfBirth;
     TextView titleAge;
     TextView textAge;
-    TextInputLayout inputGender;
     AutoCompleteTextView textGender;
     TextInputLayout inputUrl;
     TextInputEditText textUrl;
@@ -63,12 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
     Calendar maxCalendar = Calendar.getInstance();
     Calendar calendarBirth = Calendar.getInstance();
+    DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 
-    private void hideKeyboard(View view) {
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
 
-    private void updateData(String url, View view) {
+    private void updateData(String url) {
         retrofitInterface.getUser(url).enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
@@ -76,25 +75,32 @@ public class MainActivity extends AppCompatActivity {
                     textName.setText(response.body().getName());
                     textEmail.setText(response.body().getEmail());
                     textNumber.setText(response.body().getMobile());
-                    String birthdate = response.body().getBirthdate();
-                    DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
                     try {
-                        calendarBirth.setTime(Objects.requireNonNull(format.parse(birthdate)));
-                        DateFormat stringFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
-                        textDateOfBirth.setText(stringFormat.format(calendarBirth.getTime()));
+                        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+                        calendarBirth.setTime(Objects.requireNonNull(format.parse(response.body().getBirthdate())));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
+                    textDateOfBirth.setText(dateFormat.format(calendarBirth.getTime()));
+                    titleAge.setVisibility(View.VISIBLE);
+                    textAge.setVisibility(View.VISIBLE);
+                    Calendar current = Calendar.getInstance();
+                    int years = current.get(Calendar.YEAR) - calendarBirth.get(Calendar.YEAR);
+                    if (calendarBirth.get(Calendar.MONTH) > current.get(Calendar.MONTH) || (calendarBirth.get(Calendar.MONTH) == current.get(Calendar.MONTH) && calendarBirth.get(Calendar.DATE) > current.get(Calendar.DATE))) {
+                        years--;
+                    }
+                    String age = years + " years old";
+                    textAge.setText(age);
                     textGender.setText(response.body().getGender(), false);
                     buttonSubmit.setClickable(true);
                     buttonSubmit.setIcon(null);
-                    Snackbar.make(view, "Data updated", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(getWindow().getDecorView().getRootView(), "Data updated", Snackbar.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
-                Snackbar.make(view, Objects.requireNonNull(t.getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getWindow().getDecorView().getRootView(), Objects.requireNonNull(t.getLocalizedMessage()), Snackbar.LENGTH_LONG).show();
             }
         });
     }
@@ -103,30 +109,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_main);
 
         inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
-        inputName = binding.inputName;
-        textName = binding.textName;
-        inputEmail = binding.inputEmail;
-        textEmail = binding.textEmail;
-        inputNumber = binding.inputNumber;
-        textNumber = binding.textNumber;
-        inputDateOfBirth = binding.inputDateOfBirth;
-        textDateOfBirth = binding.textDateOfBirth;
-        titleAge = binding.titleAge;
-        textAge = binding.textAge;
-        inputGender = binding.inputGender;
-        textGender = binding.textGender;
-        inputUrl = binding.inputUrl;
-        textUrl = binding.textUrl;
-        buttonSubmit = (MaterialButton) binding.buttonSubmit;
+        inputName = findViewById(R.id.inputName);
+        textName = findViewById(R.id.textName);
+        inputEmail = findViewById(R.id.inputEmail);
+        textEmail = findViewById(R.id.textEmail);
+        inputNumber = findViewById(R.id.inputNumber);
+        textNumber = findViewById(R.id.textNumber);
+        inputDateOfBirth = findViewById(R.id.inputDateOfBirth);
+        textDateOfBirth = findViewById(R.id.textDateOfBirth);
+        titleAge = findViewById(R.id.titleAge);
+        textAge = findViewById(R.id.textAge);
+        textGender = findViewById(R.id.textGender);
+        inputUrl = findViewById(R.id.inputUrl);
+        textUrl = findViewById(R.id.textUrl);
+        buttonSubmit = findViewById(R.id.buttonSubmit);
 
         TypedValue value = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.progressBarStyleSmall, value, false);
-        TypedArray attributes = obtainStyledAttributes(value.data, new int[] { android.R.attr.indeterminateDrawable });
+        int[] drawable = new int[] { android.R.attr.indeterminateDrawable };
+        TypedArray attributes = obtainStyledAttributes(value.data, drawable);
         Animatable progress = (Animatable) attributes.getDrawable(0);
 
         if (progress != null) {
@@ -136,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSubmit.setIcon((Drawable) progress);
 
         retrofitInterface = new Retrofit.Builder().baseUrl("https://www.mocky.io/").addConverterFactory(GsonConverterFactory.create()).build().create(RetrofitInterface.class);
-        updateData("v3/307d7f93-ec7c-4197-9d8f-f4b1c1bbe628", binding.getRoot());
+        updateData("v3/307d7f93-ec7c-4197-9d8f-f4b1c1bbe628");
 
         textName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -198,26 +203,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         maxCalendar.add(Calendar.YEAR, -18);
-        calendarBirth.add(Calendar.YEAR, -18);
-        final DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
-        textDateOfBirth.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                inputDateOfBirth.setError(null);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
         textDateOfBirth.setOnClickListener(view -> {
-            hideKeyboard(view);
+            hideKeyboard();
             DatePickerDialog dialog = new DatePickerDialog(MainActivity.this, (datePicker, i, i1, i2) -> {
                 calendarBirth.set(i, i1, i2);
                 textDateOfBirth.setText(dateFormat.format(calendarBirth.getTime()));
@@ -240,13 +227,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> gendersAdapter = new ArrayAdapter<>(this, R.layout.item_dropdown, genders);
         textGender.setInputType(EditorInfo.TYPE_NULL);
         textGender.setOnFocusChangeListener((view, b) -> {
-            if (b) {
-                hideKeyboard(view);
-            }
+            if (b) hideKeyboard();
         });
         textGender.setAdapter(gendersAdapter);
-        textGender.setOnItemClickListener((adapterView, view, i, l) -> inputGender.setError(null));
-
 
         textUrl.addTextChangedListener(new TextWatcher() {
             @Override
@@ -270,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonSubmit.setOnClickListener(view -> {
-            hideKeyboard(view);
+            hideKeyboard();
             String url = Objects.requireNonNull(textUrl.getText()).toString();
             if (url.isEmpty()) {
                 inputUrl.setError("Please enter valid URL");
@@ -281,10 +264,13 @@ public class MainActivity extends AppCompatActivity {
             url = url.replace("https://run.mocky.io/", "");
             url = url.replace("http://www.mocky.io/", "");
             url = url.replace("http://run.mocky.io/", "");
+            url = url.replace("www.mocky.io/", "");
+            url = url.replace("run.mocky.io/", "");
+            url = url.replace("mocky.io/", "");
 
             buttonSubmit.setClickable(false);
             buttonSubmit.setIcon((Drawable) progress);
-            updateData(url, binding.getRoot());
+            updateData(url);
         });
     }
 }

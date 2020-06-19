@@ -11,7 +11,7 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_margin="36dp"
-        android:hint="Full Name"
+        android:hint="@string/full_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -29,7 +29,7 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="Email Address"
+        android:hint="@string/email_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputName">
@@ -48,7 +48,7 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="Mobile Number"
+        android:hint="@string/mobile_number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputEmail">
@@ -67,7 +67,7 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="Date of Birth"
+        android:hint="@string/date_of_birth"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputNumber">
@@ -89,7 +89,7 @@
         style="?attr/textAppearanceHeadline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Age"
+        android:text="@string/age"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -112,7 +112,7 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Gender"
+        android:hint="@string/gender"
         android:labelFor="@id/textGender"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -131,7 +131,7 @@
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_margin="72dp"
-        android:hint="Mocky URL"
+        android:hint="@string/mocky_url"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputGender">
@@ -143,15 +143,14 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputUrl" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

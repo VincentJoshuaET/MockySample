@@ -5,19 +5,19 @@ import com.google.gson.annotations.SerializedName;
 public class User {
 
     @SerializedName("name")
-    private String name;
+    private final String name;
 
     @SerializedName("email")
-    private String email;
+    private final String email;
 
     @SerializedName("mobile")
-    private String mobile;
+    private final String mobile;
 
     @SerializedName("birthdate")
-    private String birthdate;
+    private final String birthdate;
 
     @SerializedName("gender")
-    private String gender;
+    private final String gender;
 
     public User(String name, String email, String mobile, String birthdate, String gender) {
         this.name = name;
